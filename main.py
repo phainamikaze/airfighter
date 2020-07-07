@@ -2,8 +2,11 @@ import pygame
 import random 
 
 pygame.init()
-
-screen = pygame.display.set_mode((800,600))
+width = 500
+height = 800
+palyerSize = 64
+enemySize = 64
+screen = pygame.display.set_mode((width,height))
 
 pygame.display.set_caption("Air Fighter")
 icon = pygame.image.load("fighter-jet-icon.png")
@@ -12,27 +15,42 @@ pygame.display.set_icon(icon)
 background = pygame.image.load('space.jpg')
 
 playerImg = pygame.image.load('fighter-jet.png')
-playerX = 375
-playerY = 480
+playerX = (width/2)-(palyerSize/2)
+playerY = height-100
 playerX_change = 0
 playerY_change = 0
 player_change_speed = 3
 
-enemyImg = pygame.image.load('alien.png')
-enemyX = random.randint(0,736)
-enemyY = 0
-enemyY_change = 0
-enemy_change_speed = 0.3
+enemyImg = []
+enemyX = []
+enemyY = []
+enemyY_change = []
+enemy_change_speed = 0.5
+num_of_enemy = 1
+max_enemy = 6
+
+
 
 def player(x,y):
     screen.blit(playerImg,(x,y))
 
 
-def enemy(x,y):
-    screen.blit(enemyImg,(x,y))
+def enemy(Img,x,y):
+    screen.blit(Img,(x,y))
 
 running = True
+count = 1
 while running:
+    if count%500==0:
+        count=1
+        if num_of_enemy < max_enemy:
+            num_of_enemy+=1
+    print(count)
+    for i in range(num_of_enemy):
+        enemyImg.append(pygame.image.load('alien.png'))
+        enemyX.append(random.randint(0,width-enemySize))
+        enemyY.append(enemySize*-1)
+        enemyY_change.append(enemy_change_speed)
     screen.fill((0,0,0))
     screen.blit(background,(0,0))
     for event in pygame.event.get():
@@ -57,15 +75,18 @@ while running:
     playerY += playerY_change
     if playerX<=0 :
         playerX = 0
-    elif playerX>=736:
-        playerX = 736
+    elif playerX>=(width-palyerSize):
+        playerX = width-palyerSize
     if playerY<=0 :
         playerY = 0
-    elif playerY>=536:
-        playerY = 536
+    elif playerY>=(height-palyerSize):
+        playerY = height-palyerSize
     player(playerX,playerY)
-    enemyY+=enemy_change_speed
-    enemy(enemyX,enemyY)
-
+    for i in range(num_of_enemy):
+        enemyY[i]+=enemyY_change[i]
+        if enemyY[i]>=height:
+            enemyY[i]=enemySize*-1
+        enemy(enemyImg[i],enemyX[i],enemyY[i])
+    count+=1
     pygame.display.update()
     
