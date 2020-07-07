@@ -22,7 +22,7 @@ enemyImg = pygame.image.load('alien.png')
 enemyX = random.randint(0,736)
 enemyY = 0
 enemyY_change = 0
-enemy_change_speed = 3
+enemy_change_speed = 0.3
 
 def player(x,y):
     screen.blit(playerImg,(x,y))
@@ -64,7 +64,7 @@ while running:
     elif playerY>=536:
         playerY = 536
     player(playerX,playerY)
-
+    enemyY+=enemy_change_speed
     enemy(enemyX,enemyY)
 
     pygame.display.update()
