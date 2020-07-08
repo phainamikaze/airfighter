@@ -29,14 +29,24 @@ enemy_change_speed = 0.5
 num_of_enemy = 1
 max_enemy = 6
 
-
-
+bulletImg = pygame.image.load('missile.png')
+bulletX = 0
+bulletY = 0
+bulletY_change = 3
+bullet_change_speed = 1
+bullet_state = "ready"
 def player(x,y):
     screen.blit(playerImg,(x,y))
 
 
 def enemy(Img,x,y):
     screen.blit(Img,(x,y))
+
+def fire_bullet(x,y):
+    global bullet_state
+    bullet_state = "fire"
+    print(x,y)
+    screen.blit(bulletImg,(x,y))
 
 running = True
 count = 1
@@ -45,7 +55,6 @@ while running:
         count=1
         if num_of_enemy < max_enemy:
             num_of_enemy+=1
-    print(count)
     for i in range(num_of_enemy):
         enemyImg.append(pygame.image.load('alien.png'))
         enemyX.append(random.randint(0,width-enemySize))
@@ -66,6 +75,14 @@ while running:
                 playerY_change = player_change_speed*-1
             if event.key == pygame.K_DOWN:
                 playerY_change = player_change_speed
+            if event.key == pygame.K_SPACE:
+                if bullet_state == "ready":
+                    bulletX = playerX+20
+                    bulletY = playerY
+                    fire_bullet(bulletX,bulletY)
+
+                
+
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                 playerX_change = 0
@@ -87,6 +104,14 @@ while running:
         if enemyY[i]>=height:
             enemyY[i]=enemySize*-1
         enemy(enemyImg[i],enemyX[i],enemyY[i])
+    if bullet_state == "fire":
+        bulletY -= bulletY_change
+        fire_bullet(bulletX,bulletY)
+        if bulletY <=0 :
+            bullet_state = "ready"
+        
+        
+
     count+=1
     pygame.display.update()
     
