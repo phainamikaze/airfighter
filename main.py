@@ -1,6 +1,6 @@
 import pygame
 import random 
-
+import math
 pygame.init()
 width = 500
 height = 800
@@ -35,18 +35,27 @@ bulletY = 0
 bulletY_change = 3
 bullet_change_speed = 1
 bullet_state = "ready"
+
+score_value = 0
+
 def player(x,y):
     screen.blit(playerImg,(x,y))
 
 
-def enemy(Img,x,y):
-    screen.blit(Img,(x,y))
+def enemy(i,x,y):
+    screen.blit(enemyImg[i],(x,y))
 
 def fire_bullet(x,y):
     global bullet_state
     bullet_state = "fire"
-    print(x,y)
     screen.blit(bulletImg,(x,y))
+
+def isCollision(enemyX, enemyY, bulletX, bulletY):
+    distance = math.sqrt(math.pow(enemyX - bulletX, 2) + (math.pow(enemyY - bulletY, 2)))
+    if distance < 30:
+        return True
+    else:
+        return False
 
 running = True
 count = 1
@@ -60,8 +69,19 @@ while running:
         enemyX.append(random.randint(0,width-enemySize))
         enemyY.append(enemySize*-1)
         enemyY_change.append(enemy_change_speed)
+
+        collision = isCollision(enemyX[i], enemyY[i], bulletX, bulletY)
+        if collision:
+            bullet_state = "ready"
+            bulletY = playerY
+            enemyX[i] = random.randint(0,width-enemySize)
+            enemyY[i] = enemySize*-1
+            score_value +=1
+            print(score_value)
+
     screen.fill((0,0,0))
     screen.blit(background,(0,0))
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -88,6 +108,8 @@ while running:
                 playerX_change = 0
             if event.key == pygame.K_UP or event.key == pygame.K_DOWN:    
                 playerY_change = 0
+
+
     playerX += playerX_change
     playerY += playerY_change
     if playerX<=0 :
@@ -99,17 +121,20 @@ while running:
     elif playerY>=(height-palyerSize):
         playerY = height-palyerSize
     player(playerX,playerY)
+
+
     for i in range(num_of_enemy):
         enemyY[i]+=enemyY_change[i]
         if enemyY[i]>=height:
             enemyY[i]=enemySize*-1
-        enemy(enemyImg[i],enemyX[i],enemyY[i])
+        enemy(i,enemyX[i],enemyY[i])
     if bullet_state == "fire":
         bulletY -= bulletY_change
         fire_bullet(bulletX,bulletY)
         if bulletY <=0 :
             bullet_state = "ready"
         
+    
         
 
     count+=1
