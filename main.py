@@ -1,6 +1,9 @@
 import pygame
+from pygame import mixer
 import random 
 import math
+import time
+
 pygame.init()
 width = 500
 height = 800
@@ -39,11 +42,22 @@ bullet_state = "ready"
 textX = 10
 textY = 10
 font = pygame.font.Font('freesansbold.ttf',32)
+fontcd = pygame.font.Font('freesansbold.ttf',150)
 score_value = 0
+
+mixer.music.load("bg.mp3")
+mixer.music.play(-1)
 
 def show_score():
     score = font.render("Score : "+str(score_value),True,(255,255,255))
     screen.blit(score,(textX,textY))
+def show_start():
+    for i in range(3, 0, -1): 
+        cd = fontcd.render(str(i),True,(255,255,255))
+        screen.blit(cd,(220,350))
+        pygame.display.update()
+        time.sleep(1)
+        screen.fill((0,0,0))
 
 def player(x,y):
     screen.blit(playerImg,(x,y))
@@ -66,6 +80,8 @@ def isCollision(enemyX, enemyY, bulletX, bulletY):
 
 running = True
 count = 1
+
+show_start()
 while running:
     
     if count%500==0:
@@ -108,7 +124,8 @@ while running:
                     bulletX = playerX+20
                     bulletY = playerY
                     fire_bullet(bulletX,bulletY)
-
+                    fire_sound = mixer.Sound("fire.wav")
+                    fire_sound.play()
                 
 
         if event.type == pygame.KEYUP:
