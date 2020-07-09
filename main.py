@@ -28,7 +28,7 @@ enemyImg = []
 enemyX = []
 enemyY = []
 enemyY_change = []
-enemy_change_speed = 0.5
+enemy_change_speed = 1
 num_of_enemy = 1
 max_enemy = 6
 
@@ -38,7 +38,7 @@ bulletY = 0
 bulletY_change = 3
 bullet_change_speed = 1
 bullet_state = "ready"
-
+                             
 textX = 10
 textY = 10
 font = pygame.font.Font('freesansbold.ttf',32)
@@ -89,12 +89,15 @@ running = True
 gameover = False
 show_start()
 start = time.time()
+lasttimediff = 0
 while running:
     timediff = math.ceil(time.time()-start)
     if timediff%20==0 and num_of_enemy!=0:
-        if num_of_enemy < max_enemy:
+        if num_of_enemy < max_enemy and timediff != lasttimediff:
             num_of_enemy+=1
-
+            enemy_change_speed+=1
+            lasttimediff=timediff
+            
     for i in range(num_of_enemy):
         enemyImg.append(pygame.image.load('alien.png'))
         enemyX.append(random.randint(0,width-enemySize))
@@ -160,6 +163,7 @@ while running:
                 break
             enemyY[i]+=enemyY_change[i]
             if enemyY[i]>=height:
+                score_value -=1
                 enemyY[i]=enemySize*-1
             enemy(i,enemyX[i],enemyY[i])
             
@@ -177,9 +181,5 @@ while running:
             if bulletY <=0 :
                 bullet_state = "ready"
             
-        
-            
-
         show_score()
         pygame.display.update()
-    
